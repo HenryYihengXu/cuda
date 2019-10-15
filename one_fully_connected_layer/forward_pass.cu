@@ -3,55 +3,40 @@
 
 #include <stdio.h>
 
-cudaError_t vectorMultiplicationWithCuda(int *c, const int *a, 
-    const int *b, unsigned int column);
+cudaError_t vectorMatrixMulWithCuda(int *c, const int *a, 
+    const int *b, unsigned int column, unsigned int row);
 
 __global__ void vectorMultiplicationKernel(int *c, const int *a, const int *b, unsigned int column)
 {
     int i = threadIdx.x;
     int result = 0;
-    for (int j = 0; j < size; j++) {
-        result += a[i * size + j] * b[j];
+    for (int j = 0; j < column; j++) {
+        result += a[i * column + j] * b[j];
     }
-
-    
     c[i] = result;
 }
-
-__global__ void hadamardProductKernel(int *c, const int *a, const int *b, unsigned int size)
-{
-    int i = threadIdx.x;
-    c[i] = a[i] * b[i];
-}
-
 
 int main()
 {
     const int row = 3;
-    const int column = 5
-    const int a[row][column] = { 
+    const int column = 5;
+    const int a[row * column] = { 
         1, 2, 3, 4, 5,
         2, 4, 6, 8, 10,
         10, 20, 30, 40, 50
     };
     const int b[column] = { 10, 10, 10, 10, 10 };
-    int c[column] = { 0 };
+    int c[row] = { 0 };
 
     // Add vectors in parallel.
-    cudaError_t cudaStatus = vectorMultiplicationWithCuda(c, a, b, arraySize);
+    cudaError_t cudaStatus = vectorMatrixMulWithCuda(c, a, b, column, row);
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "vectorMultiplicationWithCuda failed!");
         return 1;
     }
 
-    printf("{\n 
-        1,  2,  3,  4,  5,\n
-        2,  4,  6,  8,  10,\n
-        10, 20, 30, 40, 50\n
-    } * \n
-    {10, 10, 10, 10, 10}\n
-     = {%d, %d, %d, %d, %d}\n",
-        c[0], c[1], c[2], c[3], c[4]);
+    printf("{\n 1,  2,  3,  4,  5,\n 2,  4,  6,  8,  10,\n 10, 20, 30, 40, 50\n} * \n{10, 10, 10, 10, 10}\n = {%d, %d, %d}\n",
+        c[0], c[1], c[2]);
 
     // cudaDeviceReset must be called before exiting in order for profiling and
     // tracing tools such as Nsight and Visual Profiler to show complete traces.
@@ -65,7 +50,7 @@ int main()
 }
 
 // Helper function for using CUDA to add vectors in parallel.
-cudaError_t vectorMultiplicationWithCuda(int *c, const int *a, const int *b, unsigned int column, unsigned int row)
+cudaError_t vectorMatrixMulWithCuda(int *c, const int *a, const int *b, unsigned int column, unsigned int row)
 {
     int *dev_a = 0;
     int *dev_b = 0;
@@ -80,7 +65,7 @@ cudaError_t vectorMultiplicationWithCuda(int *c, const int *a, const int *b, uns
     }
 
     // Allocate GPU buffers for three vectors (two input, one output)    .
-    cudaStatus = cudaMalloc((void**)&dev_c, column * sizeof(int));
+    cudaStatus = cudaMalloc((void**)&dev_c, row * sizeof(int));
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMalloc failed!");
         goto Error;
@@ -112,7 +97,7 @@ cudaError_t vectorMultiplicationWithCuda(int *c, const int *a, const int *b, uns
     }
 
     // Launch a kernel on the GPU with one thread for each element.
-    vectorMultiplicationKernel<<<1, row>>>(dev_c, dev_a, dev_b);
+    vectorMultiplicationKernel<<<1, row>>>(dev_c, dev_a, dev_b, column);
 
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();
@@ -130,7 +115,7 @@ cudaError_t vectorMultiplicationWithCuda(int *c, const int *a, const int *b, uns
     }
 
     // Copy output vector from GPU buffer to host memory.
-    cudaStatus = cudaMemcpy(c, dev_c, column * sizeof(int), cudaMemcpyDeviceToHost);
+    cudaStatus = cudaMemcpy(c, dev_c, row * sizeof(int), cudaMemcpyDeviceToHost);
     if (cudaStatus != cudaSuccess) {
         fprintf(stderr, "cudaMemcpy failed!");
         goto Error;
