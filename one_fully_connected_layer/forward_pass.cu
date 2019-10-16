@@ -102,7 +102,7 @@ cudaError_t vectorMatrixMulWithCuda(double *c, const double *a, const double *b,
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();
     if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "addKernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
+        fprintf(stderr, "vectorMultiplicationKernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
         goto Error;
     }
     
@@ -128,4 +128,5 @@ Error:
     
     return cudaStatus;
 }
+
 

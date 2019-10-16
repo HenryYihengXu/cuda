@@ -3,8 +3,11 @@
 
 #include <stdio.h>
 
-cudaError_t vectorMatrixMulWithCuda(double *c, const double *a, 
-    const double *b, unsigned int column, unsigned int row);
+cudaError_t vectorMatrixMulWithCuda(double *c,  double *a, 
+     double *b, unsigned int column, unsigned int row);
+    
+void size_3x5_test();
+void size_10x10_test();
 
 __global__ void addKernel(double *d, double *c, unsigned int column)
 {
@@ -16,7 +19,7 @@ __global__ void addKernel(double *d, double *c, unsigned int column)
     d[i] = result;
 }
 
-__global__ void mulKernel(double *c, const double *a, const double *b, unsigned int column)
+__global__ void mulKernel(double *c,  double *a,  double *b, unsigned int column)
 {
     int i = threadIdx.x;
     c[i] = a[i] * b[i / column];
@@ -24,39 +27,14 @@ __global__ void mulKernel(double *c, const double *a, const double *b, unsigned 
 
 int main()
 {
-    const int row = 3;
-    const int column = 5;
-    const double W[row * column] = { 
-        1, 2, 3, 4, 5,
-        2, 4, 6, 8, 10,
-        10, 20, 30, 40, 50
-    };
-    const double x[column] = { 10, 10, 10, 10, 10 };
-    double y[row] = { 0 };
-
-    // Add vectors in parallel.
-    cudaError_t cudaStatus = vectorMatrixMulWithCuda(y, W, x, column, row);
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "vectorMultiplicationWithCuda failed!");
-        return 1;
-    }
-
-    printf("{\n 1,  2,  3,  4,  5,\n 2,  4,  6,  8,  10,\n 10, 20, 30, 40, 50\n} * \n{10, 10, 10, 10, 10}\n = {%.2f, %.2f, %.2f}\n",
-        y[0], y[1], y[2]);
-
-    // cudaDeviceReset must be called before exiting in order for profiling and
-    // tracing tools such as Nsight and Visual Profiler to show complete traces.
-    cudaStatus = cudaDeviceReset();
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaDeviceReset failed!");
-        return 1;
-    }
+    size_3x5_test();
+    size_10x10_test();
 
     return 0;
 }
 
 // Helper function for using CUDA to add vectors in parallel.
-cudaError_t vectorMatrixMulWithCuda(double *d, const double *a, const double *b, unsigned int column, unsigned int row)
+cudaError_t vectorMatrixMulWithCuda(double *d,  double *a,  double *b, unsigned int column, unsigned int row)
 {
     double *dev_a = 0;
     double *dev_b = 0;
@@ -115,7 +93,7 @@ cudaError_t vectorMatrixMulWithCuda(double *d, const double *a, const double *b,
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();
     if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "addKernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
+        fprintf(stderr, "mulKernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
         goto Error;
     }
     
@@ -159,4 +137,71 @@ Error:
     
     return cudaStatus;
 }
+
+void size_3x5_test() {
+    int row = 3;
+    int column = 5;
+    double W[row * column] = { 
+        1, 2, 3, 4, 5,
+        2, 4, 6, 8, 10,
+        10, 20, 30, 40, 50
+    };
+    double x[column] = { 10, 10, 10, 10, 10 };
+    double y[row] = { 0 };
+
+    // Add vectors in parallel.
+    cudaError_t cudaStatus = vectorMatrixMulWithCuda(y, W, x, column, row);
+    if (cudaStatus != cudaSuccess) {
+        fprintf(stderr, "vectorMultiplicationWithCuda failed!");
+        return;
+    }
+
+    printf("{\n 1,  2,  3,  4,  5,\n 2,  4,  6,  8,  10,\n 10, 20, 30, 40, 50\n} * \n{10, 10, 10, 10, 10}\n = {%.2f, %.2f, %.2f}\n",
+        y[0], y[1], y[2]);
+
+    // cudaDeviceReset must be called before exiting in order for profiling and
+    // tracing tools such as Nsight and Visual Profiler to show complete traces.
+    cudaStatus = cudaDeviceReset();
+    if (cudaStatus != cudaSuccess) {
+        fprintf(stderr, "cudaDeviceReset failed!");
+        return;
+    }
+}
+
+void size_10x10_test() {
+    int row = 10;
+    int column = 10;
+    double W[row * column] = {0};
+    double x[column] = {0};
+    double y[row] = { 0 };
+
+    for (int i = 0; i < row * column; i++) {
+        W[i] = 10;
+    }
+
+    for (int i = 0; i < column; i++) {
+        x[i] = 10;
+    }
+
+    // Add vectors in parallel.
+    cudaError_t cudaStatus = vectorMatrixMulWithCuda(y, W, x, column, row);
+    if (cudaStatus != cudaSuccess) {
+        fprintf(stderr, "vectorMultiplicationWithCuda failed!");
+        return;
+    }
+
+    for (int i = 0; i < row; i++) {
+        printf("%.2f ", y[i]);
+    }
+    printf("\n");
+
+    // cudaDeviceReset must be called before exiting in order for profiling and
+    // tracing tools such as Nsight and Visual Profiler to show complete traces.
+    cudaStatus = cudaDeviceReset();
+    if (cudaStatus != cudaSuccess) {
+        fprintf(stderr, "cudaDeviceReset failed!");
+        return;
+    }
+}
+
 
