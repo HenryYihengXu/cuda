@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-cudaError_t forwardPass(double *x, double *y, 
+cudaError_t forwardPass(double *x, double *y,
     double *W, int row, int column);
 
-__global__ void vectorMultiplicationKernel(double *x, double *y, double *W, 
+__global__ void vectorMultiplicationKernel(double *x, double *y, double *W,
     int row, int column)
 {
     int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -59,7 +59,7 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-cudaError_t vectorMatrixMulWithCuda(double *x, double *y, double *W,
+cudaError_t forwardPass(double *x, double *y, double *W,
     int row, int column)
 {
     double *dev_x = 0;
@@ -78,7 +78,7 @@ cudaError_t vectorMatrixMulWithCuda(double *x, double *y, double *W,
     cudaStatus = cudaMalloc((void**)&dev_x, column * sizeof(double));
     cudaStatus = cudaMalloc((void**)&dev_y, row * sizeof(double));
     cudaStatus = cudaMalloc((void**)&dev_W, row * column * sizeof(double));
-   
+
     // Copy input vectors from host memory to GPU buffers.
     cudaStatus = cudaMemcpy(dev_x, x, column * sizeof(double), cudaMemcpyHostToDevice);
     cudaStatus = cudaMemcpy(dev_W, W, row * column * sizeof(double), cudaMemcpyHostToDevice);
@@ -92,7 +92,7 @@ cudaError_t vectorMatrixMulWithCuda(double *x, double *y, double *W,
         fprintf(stderr, "vectorMultiplicationKernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
         goto Error;
     }
-    
+
     // cudaDeviceSynchronize waits for the kernel to finish, and returns
     // any errors encountered during the launch.
     cudaStatus = cudaDeviceSynchronize();
@@ -112,6 +112,6 @@ Error:
     cudaFree(dev_x);
     cudaFree(dev_y);
     cudaFree(dev_W);
-    
+
     return cudaStatus;
 }
