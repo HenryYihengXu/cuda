@@ -9,15 +9,21 @@ cudaError_t forwardPass(double *x, double *y,
 __global__ void vectorMultiplicationKernel(double *x, double *y, double *W,
     int row, int column)
 {
-    int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (thread_idx >= row) {
+    int tid = blockIdx.x;
+    if (tid >= row) {
         return;
     }
     double result = 0;
     for (int j = 0; j < column; j++) {
-        result += W[thread_idx * column + j] * x[j];
+        result += W[tid * column + j] * x[j];
     }
-    y[thread_idx] = result;
+    for (int j = 0; j < 10000; j++) {
+        for (int k = 0; k < 10000; k++) {
+            result++;
+            result--;
+        }
+    }
+    y[tid] = result;
 }
 
 int main(int argc, char *argv[])
@@ -84,7 +90,7 @@ cudaError_t forwardPass(double *x, double *y, double *W,
     cudaStatus = cudaMemcpy(dev_W, W, row * column * sizeof(double), cudaMemcpyHostToDevice);
 
     // Launch a kernel on the GPU with one thread for each element.
-    vectorMultiplicationKernel<<<row / 512 + 1, 512>>>(dev_x, dev_y, dev_W, row, column);
+    vectorMultiplicationKernel<<<row, 1>>>(dev_x, dev_y, dev_W, row, column);
 
     // Check for any errors launching the kernel
     cudaStatus = cudaGetLastError();

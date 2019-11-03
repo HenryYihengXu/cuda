@@ -10,15 +10,21 @@ cudaError_t forwardPass(double *x1, double *y1, double *W1,
 __global__ void vectorMultiplicationKernel(double *x, double *y, double *W,
     int row, int column)
 {
-    int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
-    if (thread_idx >= row) {
+    int tid = blockIdx.x;
+    if (tid >= row) {
         return;
     }
     double result = 0;
     for (int j = 0; j < column; j++) {
-        result += W[thread_idx * column + j] * x[j];
+        result += W[tid * column + j] * x[j];
     }
-    y[thread_idx] = result;
+    for (int j = 0; j < 10000; j++) {
+        for (int k = 0; k < 10000; k++) {
+            result++;
+            result--;
+        }
+    }
+    y[tid] = result;
 }
 
 int main(int argc, char *argv[])
@@ -88,54 +94,35 @@ cudaError_t forwardPass(double *x1, double *y1, double *W1,
     double *dev_W2 = 0;
     cudaError_t cudaStatus;
 
-    // Choose which GPU to run on, change this on a multi-GPU system.
-    cudaStatus = cudaSetDevice(0);
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaSetDevice failed!  Do you have a CUDA-capable GPU installed?");
-        goto Error;
-    }
-
     // Allocate GPU buffers for three vectors (two input, one output)    .
-    cudaStatus = cudaMalloc((void**)&dev_x1, column * sizeof(double));
-    cudaStatus = cudaMalloc((void**)&dev_y1, row * sizeof(double));
-    cudaStatus = cudaMalloc((void**)&dev_W1, row * column * sizeof(double));
-    cudaStatus = cudaMalloc((void**)&dev_x2, column * sizeof(double));
-    cudaStatus = cudaMalloc((void**)&dev_y2, row * sizeof(double));
-    cudaStatus = cudaMalloc((void**)&dev_W2, row * column * sizeof(double));
+    
+    cudaMalloc((void**)&dev_x1, column * sizeof(double));
+    cudaMalloc((void**)&dev_y1, row * sizeof(double));
+    cudaMalloc((void**)&dev_W1, row * column * sizeof(double));
+    cudaMemcpy(dev_x1, x1, column * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_W1, W1, row * column * sizeof(double), cudaMemcpyHostToDevice);
 
-    // Copy input vectors from host memory to GPU buffers.
-    cudaStatus = cudaMemcpy(dev_x1, x1, column * sizeof(double), cudaMemcpyHostToDevice);
-    cudaStatus = cudaMemcpy(dev_W1, W1, row * column * sizeof(double), cudaMemcpyHostToDevice);
-    cudaStatus = cudaMemcpy(dev_x2, x2, column * sizeof(double), cudaMemcpyHostToDevice);
-    cudaStatus = cudaMemcpy(dev_W2, W2, row * column * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMalloc((void**)&dev_x2, column * sizeof(double));
+    cudaMalloc((void**)&dev_y2, row * sizeof(double));
+    cudaMalloc((void**)&dev_W2, row * column * sizeof(double));
+    cudaMemcpy(dev_x2, x2, column * sizeof(double), cudaMemcpyHostToDevice);
+    cudaMemcpy(dev_W2, W2, row * column * sizeof(double), cudaMemcpyHostToDevice);
 
-    // Launch a kernel on the GPU with one thread for each element.
-    vectorMultiplicationKernel<<<row / 512 + 1, 512>>>(dev_x1, dev_y1, dev_W1, row, column);
-    vectorMultiplicationKernel<<<row / 512 + 1, 512>>>(dev_x2, dev_y2, dev_W2, row, column);
-    // Check for any errors launching the kernel
-    cudaStatus = cudaGetLastError();
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "vectorMultiplicationKernel launch failed: %s\n", cudaGetErrorString(cudaStatus));
-        goto Error;
-    }
+    //Launch a kernel on the GPU with one thread for each element.
+    cudaStream_t s1;
+    cudaStream_t s2;
+    cudaStreamCreate(&s1);
+    vectorMultiplicationKernel<<<row, 1, 0, s1>>>(dev_x1, dev_y1, dev_W1, row, column);
 
-    // cudaDeviceSynchronize waits for the kernel to finish, and returns
-    // any errors encountered during the launch.
-    cudaStatus = cudaDeviceSynchronize();
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaDeviceSynchronize returned error code %d after launching addKernel!\n", cudaStatus);
-        goto Error;
-    }
+    cudaStreamCreate(&s2);
+    vectorMultiplicationKernel<<<row, 1, 0, s2>>>(dev_x2, dev_y2, dev_W2, row, column);
+    // vectorMultiplicationKernel<<<row, 1>>>(dev_x1, dev_y1, dev_W1, row, column);
+    // vectorMultiplicationKernel<<<row, 1>>>(dev_x2, dev_y2, dev_W2, row, column);
 
     // Copy output vector from GPU buffer to host memory.
     cudaStatus = cudaMemcpy(y1, dev_y1, row * sizeof(double), cudaMemcpyDeviceToHost);
     cudaStatus = cudaMemcpy(y2, dev_y2, row * sizeof(double), cudaMemcpyDeviceToHost);
-    if (cudaStatus != cudaSuccess) {
-        fprintf(stderr, "cudaMemcpy failed!");
-        goto Error;
-    }
 
-Error:
     cudaFree(dev_x1);
     cudaFree(dev_y1);
     cudaFree(dev_W1);
@@ -145,4 +132,5 @@ Error:
 
     return cudaStatus;
 }
+
 
