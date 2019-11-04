@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-__global__ void matrixMul(double *a. double *b, double *c, int p) {
+__global__ void matrixMul(double *a, double *b, double *c, int p) {
     int tid = blockIdx.x * gridDim.x + blockIdx.y;
     for (int i = 0; i < p; i++) {
         c[tid] = c[tid] + a[blockIdx.x * p + i] * b[i * gridDim.y + blockIdx.y];
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
     double a[m * p];
     double b[p * n];
     double c[m * n];
-    double *dev_a, *dev_b, dev_c;
+    double *dev_a, *dev_b, *dev_c;
 
     for (int i = 0; i < m; i++) {
         for (int j = 0; j < p; j++) {
@@ -35,7 +35,7 @@ int main(int argc, char *argv[]) {
 
     HANDLE_ERROR( cudaMalloc( (void**)&dev_a, m * p * sizeof(double) ) );
     HANDLE_ERROR( cudaMalloc( (void**)&dev_b, p * n * sizeof(double) ) );
-    HANDLE_ERROR( cudaMalloc( (void**)&dev_a, m * n * sizeof(double) ) );
+    HANDLE_ERROR( cudaMalloc( (void**)&dev_c, m * n * sizeof(double) ) );
 
     HANDLE_ERROR(cudaMemcpy(dev_a, a, m * p * sizeof(double), cudaMemcpyHostToDevice));
     HANDLE_ERROR(cudaMemcpy(dev_b, b, p * n * sizeof(double), cudaMemcpyHostToDevice));

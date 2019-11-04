@@ -22,17 +22,17 @@ int main(int argc, char *argv[]) {
     double *dev_a[kernelNum];
     cudaStream_t streams[kernelNum];
 
-    for(int i = 0, i < kernelNum; i++) {
+    for(int i = 0; i < kernelNum; i++) {
         HANDLE_ERROR( cudaMalloc( (void**)&dev_a[i], blockNum * threadNum * sizeof(double) ) );
     }
-    for(int i = 0, i < kernelNum; i++) {
+    for(int i = 0; i < kernelNum; i++) {
         cudaStreamCreate(&streams[i]);
     }
-    for(int i = 0, i < kernelNum; i++) {
+    for(int i = 0; i < kernelNum; i++) {
         doSomeComputation<<<blockNum, threadNum, 0, streams[i]>>>(dev_a[i]);
     }   
     
-    for(int i = 0, i < kernelNum; i++) {
+    for(int i = 0; i < kernelNum; i++) {
         HANDLE_ERROR(cudaMemcpy(a[i], dev_a[i], blockNum * threadNum * sizeof(double), cudaMemcpyDeviceToHost));
     } 
 
@@ -44,7 +44,7 @@ int main(int argc, char *argv[]) {
     //     printf("\n");
     // }
    
-    for(int i = 0, i < kernelNum; i++) {
+    for(int i = 0; i < kernelNum; i++) {
         cudaFree(dev_a[i]);
     } 
     
