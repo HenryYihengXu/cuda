@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/04_tile_iterator.dir/04_tile_iterator_generated_tile_iterator.cu.o  -o 04_tile_iterator -rdynamic /usr/local/cuda-9.0/lib64/libcudart_static.a -lpthread -ldl /usr/lib/x86_64-linux-gnu/librt.so 

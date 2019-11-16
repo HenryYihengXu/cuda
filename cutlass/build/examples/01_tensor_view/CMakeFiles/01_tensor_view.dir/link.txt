@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/01_tensor_view.dir/01_tensor_view_generated_tensor_view.cu.o  -o 01_tensor_view -rdynamic /usr/local/cuda-9.0/lib64/libcudart_static.a -lpthread -ldl /usr/lib/x86_64-linux-gnu/librt.so 

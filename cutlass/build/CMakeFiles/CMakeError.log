@@ -1,0 +1,55 @@
+Determining if the pthread_create exist failed with the following output:
+Change Dir: /users/adarsh/cuda/cutlass/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_b4b5b/fast"
+/usr/bin/make -f CMakeFiles/cmTC_b4b5b.dir/build.make CMakeFiles/cmTC_b4b5b.dir/build
+make[1]: Entering directory '/users/adarsh/cuda/cutlass/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_b4b5b.dir/CheckSymbolExists.cxx.o
+/usr/bin/c++      -o CMakeFiles/cmTC_b4b5b.dir/CheckSymbolExists.cxx.o -c /users/adarsh/cuda/cutlass/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx
+Linking CXX executable cmTC_b4b5b
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_b4b5b.dir/link.txt --verbose=1
+/usr/bin/c++        CMakeFiles/cmTC_b4b5b.dir/CheckSymbolExists.cxx.o  -o cmTC_b4b5b -rdynamic 
+CMakeFiles/cmTC_b4b5b.dir/CheckSymbolExists.cxx.o: In function `main':
+CheckSymbolExists.cxx:(.text+0x16): undefined reference to `pthread_create'
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_b4b5b.dir/build.make:97: recipe for target 'cmTC_b4b5b' failed
+make[1]: *** [cmTC_b4b5b] Error 1
+make[1]: Leaving directory '/users/adarsh/cuda/cutlass/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_b4b5b/fast' failed
+make: *** [cmTC_b4b5b/fast] Error 2
+
+File /users/adarsh/cuda/cutlass/build/CMakeFiles/CMakeTmp/CheckSymbolExists.cxx:
+/* */
+#include <pthread.h>
+
+int main(int argc, char** argv)
+{
+  (void)argv;
+#ifndef pthread_create
+  return ((int*)(&pthread_create))[argc];
+#else
+  (void)argc;
+  return 0;
+#endif
+}
+
+Determining if the function pthread_create exists in the pthreads failed with the following output:
+Change Dir: /users/adarsh/cuda/cutlass/build/CMakeFiles/CMakeTmp
+
+Run Build Command:"/usr/bin/make" "cmTC_643f0/fast"
+/usr/bin/make -f CMakeFiles/cmTC_643f0.dir/build.make CMakeFiles/cmTC_643f0.dir/build
+make[1]: Entering directory '/users/adarsh/cuda/cutlass/build/CMakeFiles/CMakeTmp'
+Building CXX object CMakeFiles/cmTC_643f0.dir/CheckFunctionExists.cxx.o
+/usr/bin/c++     -DCHECK_FUNCTION_EXISTS=pthread_create   -o CMakeFiles/cmTC_643f0.dir/CheckFunctionExists.cxx.o -c /users/adarsh/cuda/cutlass/build/CMakeFiles/CheckLibraryExists/CheckFunctionExists.cxx
+Linking CXX executable cmTC_643f0
+/usr/bin/cmake -E cmake_link_script CMakeFiles/cmTC_643f0.dir/link.txt --verbose=1
+/usr/bin/c++    -DCHECK_FUNCTION_EXISTS=pthread_create    CMakeFiles/cmTC_643f0.dir/CheckFunctionExists.cxx.o  -o cmTC_643f0 -rdynamic -lpthreads 
+/usr/bin/ld: cannot find -lpthreads
+collect2: error: ld returned 1 exit status
+CMakeFiles/cmTC_643f0.dir/build.make:97: recipe for target 'cmTC_643f0' failed
+make[1]: *** [cmTC_643f0] Error 1
+make[1]: Leaving directory '/users/adarsh/cuda/cutlass/build/CMakeFiles/CMakeTmp'
+Makefile:126: recipe for target 'cmTC_643f0/fast' failed
+make: *** [cmTC_643f0/fast] Error 2
+
+
