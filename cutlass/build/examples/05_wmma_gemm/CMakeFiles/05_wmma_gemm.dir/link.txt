@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/05_wmma_gemm.dir/05_wmma_gemm_generated_wmma_gemm.cu.o  -o 05_wmma_gemm -rdynamic /usr/local/cuda-9.0/lib64/libcudart_static.a -lpthread -ldl /usr/lib/x86_64-linux-gnu/librt.so 

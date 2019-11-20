@@ -1,0 +1,1 @@
+/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/03_strided_batched_gemm.dir/03_strided_batched_gemm_generated_strided_batched_gemm.cu.o  -o 03_strided_batched_gemm -rdynamic /usr/local/cuda-9.0/lib64/libcudart_static.a -lpthread -ldl /usr/lib/x86_64-linux-gnu/librt.so 
