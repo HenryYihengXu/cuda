@@ -1,0 +1,12 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Tests/RunCMake/pseudo_emulator.c
+stdio.h
+-
+

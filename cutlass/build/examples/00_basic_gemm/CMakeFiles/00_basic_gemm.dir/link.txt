@@ -1,1 +1,0 @@
-/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/00_basic_gemm.dir/00_basic_gemm_generated_basic_gemm.cu.o  -o 00_basic_gemm -rdynamic /usr/local/cuda-9.0/lib64/libcudart_static.a -lpthread -ldl /usr/lib/x86_64-linux-gnu/librt.so 

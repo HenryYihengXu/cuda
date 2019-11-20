@@ -1,1 +1,0 @@
-/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/06_splitK_gemm.dir/06_splitK_gemm_generated_splitK_gemm.cu.o  -o 06_splitK_gemm -rdynamic /usr/local/cuda-9.0/lib64/libcudart_static.a -lpthread -ldl /usr/lib/x86_64-linux-gnu/librt.so 
