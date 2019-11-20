@@ -1,1 +1,0 @@
-/usr/bin/c++   -O3 -DNDEBUG   CMakeFiles/02_cutlass_utilities.dir/02_cutlass_utilities_generated_cutlass_utilities.cu.o  -o 02_cutlass_utilities -rdynamic /usr/local/cuda-9.0/lib64/libcudart_static.a -lpthread -ldl /usr/lib/x86_64-linux-gnu/librt.so 

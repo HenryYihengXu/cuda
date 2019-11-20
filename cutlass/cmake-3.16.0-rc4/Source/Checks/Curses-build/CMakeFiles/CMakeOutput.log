@@ -1,0 +1,28 @@
+Determining if the function wsyncup exists in the /usr/lib/x86_64-linux-gnu/libcurses.so passed with the following output:
+Change Dir: /users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Source/Checks/Curses-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_26fff/fast && make -f CMakeFiles/cmTC_26fff.dir/build.make CMakeFiles/cmTC_26fff.dir/build
+make[1]: Entering directory '/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Source/Checks/Curses-build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_26fff.dir/CheckFunctionExists.c.o
+/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=wsyncup   -o CMakeFiles/cmTC_26fff.dir/CheckFunctionExists.c.o   -c /users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Modules/CheckFunctionExists.c
+Linking C executable cmTC_26fff
+/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Bootstrap.cmk/cmake -E cmake_link_script CMakeFiles/cmTC_26fff.dir/link.txt --verbose=1
+/usr/bin/gcc  -DCHECK_FUNCTION_EXISTS=wsyncup    -rdynamic CMakeFiles/cmTC_26fff.dir/CheckFunctionExists.c.o  -o cmTC_26fff  -lcurses 
+make[1]: Leaving directory '/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Source/Checks/Curses-build/CMakeFiles/CMakeTmp'
+
+
+
+Determining if the function cbreak exists in the /usr/lib/x86_64-linux-gnu/libncurses.so passed with the following output:
+Change Dir: /users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Source/Checks/Curses-build/CMakeFiles/CMakeTmp
+
+Run Build Command(s):/usr/bin/make cmTC_3f331/fast && make -f CMakeFiles/cmTC_3f331.dir/build.make CMakeFiles/cmTC_3f331.dir/build
+make[1]: Entering directory '/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Source/Checks/Curses-build/CMakeFiles/CMakeTmp'
+Building C object CMakeFiles/cmTC_3f331.dir/CheckFunctionExists.c.o
+/usr/bin/gcc   -DCHECK_FUNCTION_EXISTS=cbreak   -o CMakeFiles/cmTC_3f331.dir/CheckFunctionExists.c.o   -c /users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Modules/CheckFunctionExists.c
+Linking C executable cmTC_3f331
+/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Bootstrap.cmk/cmake -E cmake_link_script CMakeFiles/cmTC_3f331.dir/link.txt --verbose=1
+/usr/bin/gcc  -DCHECK_FUNCTION_EXISTS=cbreak    -rdynamic CMakeFiles/cmTC_3f331.dir/CheckFunctionExists.c.o  -o cmTC_3f331  -lncurses 
+make[1]: Leaving directory '/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Source/Checks/Curses-build/CMakeFiles/CMakeTmp'
+
+
+
