@@ -1,3 +1,0 @@
-/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Source/Checks/Curses-build/CMakeFiles/rebuild_cache.dir
-/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Source/Checks/Curses-build/CMakeFiles/edit_cache.dir
-/users/HenryXu/cuda/cutlass/cmake-3.16.0-rc4/Source/Checks/Curses-build/CMakeFiles/CheckCurses.dir
